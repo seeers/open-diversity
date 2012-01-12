@@ -5,8 +5,8 @@
 
 
 volatile long unsigned int numSyncs[2] = {0, 0};
-volatile long unsigned int lastFrameRates[2][HISTORY_SIZE]; 
-volatile int lastFrameRateSlot = 0; // to use lastFrameRates-Array as ring buffer
+volatile long unsigned int lastPulses[2][HISTORY_SIZE]; 
+volatile int lastPulseSlot = 0; // to use lastPulse-Array as ring buffer
 volatile int numTimerEvents = 0;
 
 int activeSource = 0;
@@ -41,7 +41,7 @@ unsigned int calcAvgFrameRate(int videoIn) {
   cli(); // guarantees that lastFrameRates does 
   
   for(int i=0;i<HISTORY_SIZE;i++) {
-      sum+=lastFrameRates[videoIn][i] * (1000/FR_UPDATE_RATE);;
+      sum+=lastPulses[videoIn][i] * (1000/FR_UPDATE_RATE);;
   }
   sei();
   return (sum/HISTORY_SIZE);
@@ -51,9 +51,9 @@ unsigned int calcAvgFrameRate(int videoIn) {
 void runTimer() {
   
   // Update framerate
-  lastFrameRateSlot = (lastFrameRateSlot+1) % HISTORY_SIZE;
-  lastFrameRates[0][lastFrameRateSlot] = numSyncs[0];
-  lastFrameRates[1][lastFrameRateSlot] = numSyncs[1];
+  lastPulseSlot = (lastPulseSlot+1) % HISTORY_SIZE;
+  lastPulses[0][lastPulseSlot] = numSyncs[0];
+  lastPulses[1][lastPulseSlot] = numSyncs[1];
   numSyncs[0] = numSyncs[1] = 0;
   
   
@@ -70,8 +70,8 @@ void runTimer() {
     } else if ((abs(fr0 - 25) + SWITCH_FPS_RESIST < abs(fr1 - 25)) && activeSource == 1) {
       switchToVideoSource(0);
     }
-  
     printf("Last Frames: %d / %d\n",  fr0, fr1);
+  
   }
 }
 
@@ -83,8 +83,8 @@ void setup() {
   
   // Initialize sync-vars
   for(int i=0;i<HISTORY_SIZE;i++) {
-    lastFrameRates[0][i]=0;
-    lastFrameRates[1][i]=0;    
+    lastPulses[0][i]=0;
+    lastPulses[1][i]=0;    
   }
   
   pinMode(VSWITCH_SELECT, OUTPUT);
