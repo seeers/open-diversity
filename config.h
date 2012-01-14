@@ -1,12 +1,9 @@
 // PINS
-#define VSYNCIN1 2
-#define VSYNCIN2 3
-
 #define VSWITCH_DISABLE 10
 #define VSWITCH_SELECT 9
 
-#define LED_1 12
-#define LED_2 12 // Temp for testing, should be 13
+#define LED_1 7
+#define LED_2 6
 
 #define HISTORY_SIZE 10 // How many old framerates to keep to calculate avg
 #define FR_UPDATE_RATE 100 // update framerate records every XX milliseconds

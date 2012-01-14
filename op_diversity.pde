@@ -9,10 +9,9 @@ volatile long unsigned int lastPulses[2][HISTORY_SIZE];
 volatile int lastPulseSlot = 0; // to use lastPulse-Array as ring buffer
 volatile int numTimerEvents = 0;
 
-int activeSource = 0;
+volatile int activeSource = 0;
 
-void switchToVideoSource(int source) {
-  printf("Switching to source %d\n", source);
+void switchToVideoSource(int source, int fr0,  int fr1) {
   if (source == 0) {
     digitalWrite(VSWITCH_SELECT, HIGH);
     digitalWrite(LED_1, HIGH);
@@ -24,6 +23,7 @@ void switchToVideoSource(int source) {
     digitalWrite(LED_2, HIGH);
     activeSource=1;    
   }
+  printf("Switching to source %d (%d vs %d)\n", source, fr0, fr1);
 }
 
 void VSVideo1() {
@@ -62,16 +62,15 @@ void runTimer() {
   if (numTimerEvents >= SWITCH_EVERY) {
     numTimerEvents = 0;
     
-    unsigned int fr0 = calcAvgFrameRate(0);
-    unsigned int fr1 = calcAvgFrameRate(1);
+    int fr0 = calcAvgFrameRate(0);
+    int fr1 = calcAvgFrameRate(1);
   
-    if ((abs(fr0 - 25) > abs(fr1 - 25) + SWITCH_FPS_RESIST) && activeSource == 0) {
-      switchToVideoSource(1);
-    } else if ((abs(fr0 - 25) + SWITCH_FPS_RESIST < abs(fr1 - 25)) && activeSource == 1) {
-      switchToVideoSource(0);
+    if ((abs(fr1 - 50) + SWITCH_FPS_RESIST < abs(fr0 - 50)) && activeSource == 0) {
+      switchToVideoSource(1, fr0, fr1);
+    } else if ( (abs(fr0 - 50) + SWITCH_FPS_RESIST < abs(fr1 - 50)) && activeSource == 1) {
+      switchToVideoSource(0, fr0, fr1);
     }
     printf("Last Frames: %d / %d\n",  fr0, fr1);
-  
   }
 }
 
@@ -94,18 +93,15 @@ void setup() {
   digitalWrite(LED_1, LOW);
   pinMode(LED_2, OUTPUT);
   digitalWrite(LED_2, LOW);  
-  attachInterrupt(0, VSVideo1, RISING);
-  attachInterrupt(1, VSVideo2, RISING);
+  attachInterrupt(1, VSVideo1, RISING);
+  attachInterrupt(0, VSVideo2, RISING);
   
   // Timer to update frame rate records and switch video
   FlexiTimer2::set(FR_UPDATE_RATE, runTimer);
   FlexiTimer2::start();
   
-  // Test Pins
-  pinMode(11,OUTPUT);
-  digitalWrite(11,LOW);
-  pinMode(13,OUTPUT);
-  digitalWrite(13,LOW);
+  switchToVideoSource(0,0,0);
+  
 }
 
 
@@ -113,14 +109,5 @@ void setup() {
 
 void loop() {
 
-  // Generate test frames
-  for(int i=0;i<25;i++) {
-    digitalWrite(13,HIGH);  
-    digitalWrite(13,LOW);  
-  }
-  for(int i=0;i<50;i++) {
-    digitalWrite(11,HIGH); 
-    digitalWrite(11,LOW);  
-  }
   delay(1000);
 }
