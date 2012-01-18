@@ -70,7 +70,14 @@ void runTimer() {
     } else if ( (abs(fr0 - 50) + SWITCH_FPS_RESIST < abs(fr1 - 50)) && activeSource == 1) {
       switchToVideoSource(0, fr0, fr1);
     }
+    
+#ifdef RSSI_ON
+    int rssi0 = map(analogRead(RSSI1), 0, 245, 0, 100);
+    int rssi1 = map(analogRead(RSSI2), 0, 245, 0, 100);
+    printf("Last Frames: %d (%d) / %d (%d)\n",  fr0, rssi0, fr1, rssi1);
+#else
     printf("Last Frames: %d / %d\n",  fr0, fr1);
+#endif
   }
 }
 

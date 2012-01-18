@@ -12,6 +12,12 @@
 #define SWITCH_FPS_RESIST 2 // How many FPS the video sources must differ to recitify a switch
 
 
+// === Optional RSSI
+
+#define RSSI_ON // comment out to disable RSSI output
+#define RSSI1 A1 
+#define RSSI2 A0 // A0 ist the Pin that is next to yellow led
+
 // ===================
 
 #define SWITCH_EVERY SWITCH_RATE / FR_UPDATE_RATE
