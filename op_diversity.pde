@@ -1,3 +1,27 @@
+/* 
+Open Diversity - Video based diversity software
+Idea by Rangarid
+Hardware design by Daniel
+Implementation an refinement by Nils, Jochen
+
+Copyright 2011-2012 by Nils, Jochen
+
+This file is part of Open Diversity
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
+
 #include <FlexiTimer2.h> // http://www.pjrc.com/teensy/td_libs_MsTimer2.html
 
 #include "config.h"
@@ -72,8 +96,8 @@ void runTimer() {
     }
     
 #ifdef RSSI_ON
-    int rssi0 = map(analogRead(RSSI1), 0, 245, 0, 100);
-    int rssi1 = map(analogRead(RSSI2), 0, 245, 0, 100);
+    int rssi0 = analogRead(RSSI1);
+    int rssi1 = analogRead(RSSI2);
     printf("Last Frames: %d (%d) / %d (%d)\n",  fr0, rssi0, fr1, rssi1);
 #else
     printf("Last Frames: %d / %d\n",  fr0, fr1);
