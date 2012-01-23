@@ -2,7 +2,7 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation an refinement by Nils, Jochen
+Implementation and refinement by Nils, Jochen
 
 Copyright 2011-2012 by Nils, Jochen
 
@@ -62,12 +62,10 @@ void VSVideo2() {
 // Calculate average frame rate based on last recorded pulses
 unsigned int calcAvgFrameRate(int videoIn) {
   unsigned int sum = 0;
-  cli(); // guarantees that no framerate update occurs during calculcation
   
   for(int i=0;i<HISTORY_SIZE;i++) {
       sum+=lastPulses[videoIn][i] * (1000/FR_UPDATE_RATE);;
   }
-  sei();
   return (sum/HISTORY_SIZE);
 }
 
