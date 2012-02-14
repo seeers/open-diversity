@@ -2,9 +2,9 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation and refinement by Nils, Jochen
+Implementation and refinement by Nils, Nachbrenner
 
-Copyright 2011-2012 by Nils, Jochen
+Copyright 2011-2012 by Nils, Nachbrenner
 
 This file is part of Open Diversity
 
