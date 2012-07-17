@@ -27,7 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. 
 
 void setup()
 {
-  digitalWrite(BUZZER, HIGH);
+  #ifdef BUZZERENABLED
+    digitalWrite(BUZZER, HIGH);
+  #endif
+
 #ifdef DEBUG
   Serial.begin(9600);
 #endif
@@ -38,7 +41,7 @@ void setup()
 
   //ADG794 switch inputs
   //IN LOW, EN LOW: vid0
-  //IN HIGH, EN LOW: vd1
+  //IN HIGH, EN LOW: vid1
   pinMode(IN, OUTPUT);
   pinMode(EN, OUTPUT);
 
@@ -57,11 +60,19 @@ void setup()
 
 void loop()
 {
+  #ifdef BUZZERENABLED
   delay(500);
   digitalWrite(BUZZER, LOW);
+  #endif
+  
   long timeVideo = millis();
-  long timeBuzzer = timeVideo;
-  boolean alarm = false;
+  
+  #ifdef BUZZERENABLED
+  #ifdef BATMONITOR
+    long timeBuzzer = timeVideo;
+    boolean alarm = false;
+  #endif
+  #endif
   
   enum sensitivitylevel level = SENSITIVITY;
   int interval = 0;
@@ -83,23 +94,26 @@ void loop()
   
   while(true)
   {
-    //One Second
     long currentTime = millis();
 
-    //Low Voltage Alarm
-    if (currentTime - timeBuzzer > 500)
-    {
-      if (checkVoltage())
+    #ifdef BUZZERENABLED
+    #ifdef BATMONITOR
+      //Low Voltage Alarm
+      if (currentTime - timeBuzzer > 500)
       {
-        digitalWrite(BUZZER, alarm);
-        timeBuzzer = currentTime;
-        alarm = !alarm;
+        if (checkVoltage())
+        {
+          digitalWrite(BUZZER, alarm);
+          timeBuzzer = currentTime;
+          alarm = !alarm;
+        }
+        else
+        {
+          timeBuzzer = currentTime;
+        }
       }
-      else
-      {
-        timeBuzzer = currentTime;
-      }
-    }
+    #endif
+    #endif
     
     if (currentTime - timeVideo >= interval)
     {

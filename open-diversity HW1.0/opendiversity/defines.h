@@ -37,17 +37,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. 
 #define LED1 13
 
 //Buzzer
-#define BUZZER 8
+
+  #define BUZZER 8
+
 
 //RSSI
-#define RSSI0 A2
-#define RSSI1 A3
+
+  #define RSSI0 A2
+  #define RSSI1 A3
+
 
 //Battery
-#define VBAT A0
+
+
+  #define VBAT A0
+
+
 
 volatile int syncs[2] = {0,0};
-volatile int rssi[2] = {0,0};
+
+  volatile int rssi[2] = {0,0};
+
 
 enum sensitivitylevel {SLOW, MEDIUM, FAST};
 
