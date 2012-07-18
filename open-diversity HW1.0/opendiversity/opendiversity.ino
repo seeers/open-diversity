@@ -61,59 +61,61 @@ void setup()
 void loop()
 {
   #ifdef BUZZERENABLED
-  delay(500);
-  digitalWrite(BUZZER, LOW);
+    delay(500);
+    digitalWrite(BUZZER, LOW);
   #endif
   
   long timeVideo = millis();
   
   #ifdef BUZZERENABLED
-  #ifdef BATMONITOR
-    long timeBuzzer = timeVideo;
-    boolean alarm = false;
-  #endif
+    #ifdef BATMONITOR
+      long timeBuzzer = timeVideo;
+      boolean alarm = false;
+    #endif
   #endif
   
-  enum sensitivitylevel level = SENSITIVITY;
   int interval = 0;
-  if (level == SLOW)
-  {
-    //1 second - 1hz
-    interval = 1000;
-  }
-  else if(level == MEDIUM)
-  {
-    //500 milliseconds - 2hz
-    interval = 500;
-  }
-  else if (level == FAST)
-  {
-    //200 milliseconds - 5hz
-    interval = 200;
-  }
   
   while(true)
   {
     long currentTime = millis();
-
+    
     #ifdef BUZZERENABLED
-    #ifdef BATMONITOR
-      //Low Voltage Alarm
-      if (currentTime - timeBuzzer > 500)
-      {
-        if (checkVoltage())
+      #ifdef BATMONITOR
+        //Low Voltage Alarm
+        if (currentTime - timeBuzzer > 500)
         {
-          digitalWrite(BUZZER, alarm);
-          timeBuzzer = currentTime;
-          alarm = !alarm;
+          if (checkVoltage())
+          {
+            digitalWrite(BUZZER, alarm);
+            timeBuzzer = currentTime;
+            alarm = !alarm;
+          }
+          else
+          {
+            timeBuzzer = currentTime;
+          }
         }
-        else
-        {
-          timeBuzzer = currentTime;
-        }
-      }
+      #endif
     #endif
-    #endif
+    
+    //define sensitivity with poti
+    interval = analogRead(POTI);
+    if (interval < 342)
+    {
+      //slow
+      interval = 1000;
+    }
+    else if (interval >= 342 && interval < 684)
+    {
+      //medium
+      interval = 500;
+    }
+    else if (interval >=684 && interval < 1024)
+    {
+      //fast
+      interval = 200;
+    }
     
     if (currentTime - timeVideo >= interval)
     {

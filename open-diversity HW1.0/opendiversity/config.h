@@ -40,15 +40,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. 
 //comment if not used
 //#define RSSI
 
-//####Sensitivity#####
-//The higher the Sensitivity the more often it will switch.
-//SLOW - 1Hz - Pretty slow, but works best. One switch per second.
-//MEDIUM - 2Hz - Two switches per second, should work good as well.
-//FAST - 5hz - Five switches per second, excellent switching results, but more switching even if signal qualitity might be the same.
-#define SENSITIVITY FAST
-
 //####Buzzer#####
 //only use if buzzer is soldered, else comment
-//#define BUZZERENABLED
+#define BUZZERENABLED
 //makes beep if video source is switched, comment if not used
 //#define BEEPONSWITCH 
