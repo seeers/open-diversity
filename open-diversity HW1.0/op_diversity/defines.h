@@ -2,9 +2,9 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation and refinement by Nils, Nachbrenner
+Implementation and refinement by Nils, Nachbrenner, Rangarid
 
-Copyright 2011-2012 by Nils, Nachbrenner
+Copyright 2011-2012 by Nils, Nachbrenner, Rangarid
 
 This file is part of Open Diversity
 
@@ -22,20 +22,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 
-#include <stdio.h>
-#include "Arduino.h"
+// PINS
+#define VSWITCH_DISABLE 11
+#define VSWITCH_SELECT 10
 
+#define LED1 12
+#define LED2 13
 
-static FILE uartout = {0} ;
+#define BUZZER 8
 
-static int uart_putchar (char c, FILE *stream)
-{
-    Serial.write(c) ;
-    return 0 ;
-}
+#define SUP_VOLT A0
+#define SENS_INPUT A4
 
-static void initUART() {
-  Serial.begin(9600) ;
-  fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
-  stdout = &uartout ;
-}
+#define RSSI1 A3 
+#define RSSI2 A2 // A0 ist the Pin that is next to yellow led
+
+// Framerate
+#define SWITCH_EVERY SWITCH_RATE / FR_UPDATE_RATE
