@@ -2,9 +2,9 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation by Rangarid
+Implementation and refinement by Nils, Nachbrenner
 
-Copyright 2011-2012 by Rangarid
+Copyright 2011-2012 by Nils, Nachbrenner
 
 This file is part of Open Diversity
 
@@ -22,32 +22,20 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 
-//LM1881
-#define VSYNC0 2
-#define VSYNC1 3
-//#define CSYNC0
-//#define CSYNC1
+#include <stdio.h>
+#include "Arduino.h"
 
-//ADG794
-#define IN 10
-#define EN 11
 
-//LEDs
-#define LED0 12
-#define LED1 13
+static FILE uartout = {0} ;
 
-//Buzzer
-#define BUZZER 8
+static int uart_putchar (char c, FILE *stream)
+{
+    Serial.write(c) ;
+    return 0 ;
+}
 
-//RSSI
-#define RSSI0 A2
-#define RSSI1 A3
-
-//Battery
-#define VBAT A0
-
-//Poti
-#define POTI A4
-
-volatile int syncs[2] = {0,0};
-volatile int rssi[2] = {0,0};
+static void initUART() {
+  Serial.begin(9600) ;
+  fdev_setup_stream (&uartout, uart_putchar, NULL, _FDEV_SETUP_WRITE);
+  stdout = &uartout ;
+}
