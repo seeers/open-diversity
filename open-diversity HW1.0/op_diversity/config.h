@@ -23,7 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
 
 //Low Voltage Alarm Value
-#define ALARM_Volt 9.0
+#define LOWVOLTAGE 9.0
 
 //Video values filter size
 #define HISTORY_SIZE 5 // How many old framerates to keep to calculate avg
