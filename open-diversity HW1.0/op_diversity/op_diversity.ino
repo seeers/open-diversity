@@ -33,9 +33,10 @@ volatile long unsigned int lastPulses[2][HISTORY_SIZE];
 volatile int activeSource = 0;
 volatile int lastPulseSlot = 0; // to use lastPulse-Array as ring buffer
 volatile int numTimerEvents = 0;
-unsigned int inputVolt;
+unsigned int inputVoltage;
 unsigned int sensitivity;
 unsigned int SWITCH_FPS_RESIST = 4 ; // How many FPS the video sources must differ to recitify a switch
+boolean buzzerOn = false;
 
 void switchToVideoSource(int source, int fr0,  int fr1) {
   if (source == 0) {
@@ -152,8 +153,7 @@ void setup() {
 }
 
 void loop() {
- delay(1000);
- inputVolt = analogRead(SUP_VOLT);
+ //inputVoltage = analogRead(SUP_VOLT);
  SWITCH_FPS_RESIST = map(analogRead(SENS_INPUT),0,1023,0,10);
   
   /*
