@@ -2,9 +2,9 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation and refinement by Nils, Nachbrenner, Rangarid
+Implementation and refinement by Nils, Nachbrenner
 
-Copyright 2011-2012 by Nils, Nachbrenner, Rangarid
+Copyright 2011-2012 by Nils, Nachbrenner
 
 This file is part of Open Diversity
 
@@ -21,31 +21,36 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. */
+// PINS
+#define VSWITCH_DISABLE 11
+#define VSWITCH_SELECT 10
 
-//Low Voltage Alarm Value
-#define LOWVOLTAGE 9.0
+#define LED_1 12
+#define LED_2 13
+#define BUZZER 8
 
-//Video values filter size
-#define HISTORY_SIZE 5 // How many old framerates to keep to calculate avg
+#define SUP_VOLT A0
+#define SENS_INPUT A4
+#define LOWVOLTAG_WARN
+#define ALARM_VOLT 500 // ~9.9V , 1023 ^= 20.15V
 
-//Update Rate
-#define FR_UPDATE_RATE 100 // update framerate records every XX milliseconds
-#define SWITCH_RATE 200 // look if I need to switch video input every XXX milliseconds. Needs to be > FR_UPDATE_RATE
+#define HISTORY_SIZE 10 // How many old framerates to keep to calculate avg
+#define FR_UPDATE_INT 100 // update framerate records every XX milliseconds
+#define SWITCH_INT 200 // look if I need to switch video input every XXX milliseconds. Needs to be > FR_UPDATE_RATE
+#define BEEP_INT 400
+
 
 // === Optional RSSI
-//uncomment to enable RSSI, comment to disable
-//#define RSSI_ON
 
-// === Debug
-//uncomment to enable, comment to disable
-#define DEBUG
+//#define RSSI_ON // comment out to disable RSSI output
+//#define SERIAL_OUTPUT_ON
+#define BUZZER_CHANNEL_IND // acoustic channel chance indicator
+#define RSSI1 A3 
+#define RSSI2 A2 // A0 ist the Pin that is next to yellow led
 
-// === Buzzer Config
-//uncomment to enable, comment to disable
-#define BEEPONSTART
+// ===================
 
-
-
-
+#define SWITCH_EVERY SWITCH_INT / FR_UPDATE_INT
+#define BEEP_EVERY BEEP_INT / FR_UPDATE_INT
 
 
