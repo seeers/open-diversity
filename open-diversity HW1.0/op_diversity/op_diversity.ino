@@ -51,7 +51,9 @@ void switchToVideoSource(int source, int fr0,  int fr1) {
     digitalWrite(LED_2, HIGH);
     activeSource=1;    
   }
+#ifdef SERIAL_OUTPUT_ON
   printf("Switching to source %d (%d vs %d)\n", source, fr0, fr1);
+#endif
 }
 
 void VSVideo1() {
@@ -61,7 +63,6 @@ void VSVideo1() {
 void VSVideo2() {
   numSyncs[1]++;
 }
-
 
 // Calculate average frame rate based on last recorded pulses
 unsigned int calcAvgFrameRate(int videoIn) {
@@ -194,7 +195,7 @@ void setup() {
   pinMode(LED_2, OUTPUT);
   digitalWrite(LED_2, LOW); 
   pinMode(SUP_VOLT, INPUT);
-  pinMode(sensitivity, INPUT); 
+  pinMode(SENS_INPUT, INPUT);
   attachInterrupt(1, VSVideo1, RISING);
   attachInterrupt(0, VSVideo2, RISING);
   
@@ -226,8 +227,6 @@ void loop() {
   printf("input Voltage: %d \n", inputVoltage);
   printf("SWITCH_FPS_RESIST: %d \n", SWITCH_FPS_RESIST);
 #endif
- // switchToVideoSource(1, 0,0);
-  delay(1000);
- // digitalWrite(BUZZER, LOW);
- //  switchToVideoSource(0, 0,0);
+
+
 }
