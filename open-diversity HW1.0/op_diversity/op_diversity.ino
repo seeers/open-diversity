@@ -2,9 +2,9 @@
 Open Diversity - Video based diversity software
 Idea by Rangarid
 Hardware design by Daniel
-Implementation and refinement by Nils, Nachbrenner
+Implementation and refinement by Nils, Nachbrenner, Rangarid
 
-Copyright 2011-2012 by Nils, Nachbrenner
+Copyright 2011-2012 by Nils, Nachbrenner, Rangarid
 
 This file is part of Open Diversity
 
@@ -33,7 +33,6 @@ volatile long unsigned int lastPulses[2][HISTORY_SIZE];
 volatile int lastPulseSlot = 0; // to use lastPulse-Array as ring buffer
 volatile int numTimerEvents = 0;
 unsigned int inputVoltage;
-unsigned int sensitivity;
 unsigned int SWITCH_FPS_RESIST = 4 ; // How many FPS the video sources must differ to recitify a switch
 volatile char buzzerStatus = 0; // 0 ^= no alarm, 1 an -1 ^= switched to source 1, 2 an -2 ^= switched to source 2 , 10,-10,5,-5 low Voltage, 100 be quiet!
 
