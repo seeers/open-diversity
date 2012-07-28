@@ -221,7 +221,7 @@ void loop() {
   }
  #endif
  
-  SWITCH_FPS_RESIST=map(analogRead(SENS_INPUT),0,1023,0,50);
+  SWITCH_FPS_RESIST=map(analogRead(SENS_INPUT),0,1023,0,20);
 #ifdef SERIAL_OUTPUT_ON
   printf("input Voltage: %d \n", inputVoltage);
   printf("SWITCH_FPS_RESIST: %d \n", SWITCH_FPS_RESIST);
