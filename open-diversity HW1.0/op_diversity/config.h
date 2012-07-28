@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA. 
 #define SUP_VOLT A0
 #define SENS_INPUT A4
 #define LOWVOLTAG_WARN
-#define ALARM_VOLT 500 // ~9.9V , 1023 ^= 20.15V
+#define ALARM_VOLT 540 // to calculate, use U / 20.15 V *1023, where U is the alarm voltage in Volts
 
 #define HISTORY_SIZE 10 // How many old framerates to keep to calculate avg
 #define FR_UPDATE_INT 100 // update framerate records every XX milliseconds
