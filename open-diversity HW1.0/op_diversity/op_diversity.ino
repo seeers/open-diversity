@@ -33,8 +33,10 @@ volatile long unsigned int lastPulses[2][HISTORY_SIZE];
 volatile int lastPulseSlot = 0; // to use lastPulse-Array as ring buffer
 volatile int numTimerEvents = 0;
 unsigned int inputVoltage;
-unsigned int SWITCH_FPS_RESIST = 4 ; // How many FPS the video sources must differ to recitify a switch
+unsigned int switchFPSResist = 4 ; // How many FPS the video sources must differ to recitify a switch
 volatile char buzzerStatus = 0; // 0 ^= no alarm, 1 an -1 ^= switched to source 1, 2 an -2 ^= switched to source 2 , 10,-10,5,-5 low Voltage, 100 be quiet!
+volatile unsigned char dipStatus = 1; // Status Byte to control Buzzer function and ??? , here the "%2 bit" denotes the bit of the low voltage warner,  
+                                      // "%3 bit" of the channel change indicator %5 %7 are free
 
 volatile int activeSource = 0;
 
@@ -81,8 +83,7 @@ void runTimer() {
   lastPulses[0][lastPulseSlot] = numSyncs[0];
   lastPulses[1][lastPulseSlot] = numSyncs[1];
   numSyncs[0] = numSyncs[1] = 0;
-  
-  
+    
   // see if we need to check for video switch. if yes: do it! :)
   numTimerEvents++;
   if (numTimerEvents % SWITCH_EVERY == 0) {
@@ -91,33 +92,22 @@ void runTimer() {
     int fr0 = calcAvgFrameRate(0);
     int fr1 = calcAvgFrameRate(1);
   
-    if ((abs(fr1 - 50) + SWITCH_FPS_RESIST < abs(fr0 - 50)) && activeSource == 0) {
+    if ((abs(fr1 - 50) + switchFPSResist < abs(fr0 - 50)) && activeSource == 0) {
       switchToVideoSource(1, fr0, fr1);
-      if ( buzzerStatus == 0) {
-#ifdef BUZZER_CHANNEL_IND
+      if ( buzzerStatus == 0 && dipStatus % 3 == 0) {
         buzzerStatus = 2 ; 
-#endif
       }
-    } else if ( (abs(fr0 - 50) + SWITCH_FPS_RESIST < abs(fr1 - 50)) && activeSource == 1) {
+    } else if ( (abs(fr0 - 50) + switchFPSResist < abs(fr1 - 50)) && activeSource == 1) {
       switchToVideoSource(0, fr0, fr1);
-       if ( buzzerStatus == 0) {
-#ifdef BUZZER_CHANNEL_IND
+       if ( buzzerStatus == 0 && dipStatus % 3 == 0) {
          buzzerStatus = 1 ; 
-#endif
       }
     }
     
-#ifdef RSSI_ON
-    int rssi0 = analogRead(RSSI1);
-    int rssi1 = analogRead(RSSI2);
-#ifdef SERIAL_OUTPUT_ON
-    printf("Last Frames: %d (%d) / %d (%d)\n",  fr0, rssi0, fr1, rssi1);
-#endif
-#else
 #ifdef SERIAL_OUTPUT_ON
     printf("Last Frames: %d / %d\n",  fr0, fr1);
 #endif
-#endif
+
 
   }
   
@@ -128,7 +118,7 @@ void runTimer() {
          digitalWrite(BUZZER, LOW);
          buzzerStatus = -1;
          break;
-        
+  
         case -1: 
          digitalWrite(BUZZER, HIGH);
          buzzerStatus = 100;
@@ -172,6 +162,57 @@ void runTimer() {
   } 
 }
 
+// Calculate Dip Status in the %x representation
+ unsigned char calcDipStatus( int Voltage ) {
+    if ( Voltage > 976) {
+   return 1 ; 
+  }
+  if ( Voltage <= 976 && Voltage > 900) {
+   return 2 ; 
+  }
+  if ( Voltage <= 900 && Voltage > 836) {
+   return 3 ; 
+  }
+  if ( Voltage <= 836 && Voltage > 782) {
+   return 6 ; 
+  }
+  if ( Voltage <= 782 && Voltage > 735) {
+   return 5 ; 
+  }
+  if ( Voltage <= 735 && Voltage > 690) {
+   return 10 ; 
+  }
+  if ( Voltage <= 690 && Voltage > 662) {
+   return 15 ; 
+  }
+  if ( Voltage <= 662 && Voltage > 641) {
+   return 7 ; 
+  }
+  if ( Voltage <= 641 && Voltage > 622) {
+   return 30 ; 
+  }
+  if ( Voltage <= 622 && Voltage > 599) {
+   return 14 ; 
+  }
+  if ( Voltage <= 599 && Voltage > 570) {
+   return 21 ; 
+  }
+  if ( Voltage <= 570 && Voltage > 544) {
+   return 42 ; 
+  }  
+  if ( Voltage <= 544 && Voltage > 521) {
+   return 35 ; 
+  }
+  if ( Voltage <= 521 && Voltage > 499) {
+   return 70 ; 
+  }
+  if ( Voltage <= 499 && Voltage > 478) {
+   return 105 ; 
+  }
+  if ( Voltage < 478) {
+   return 2 ; 
+  }
+}
 
 // =====================================================================
 
@@ -202,30 +243,29 @@ void setup() {
   // Timer to update frame rate records and switch video
   FlexiTimer2::set(FR_UPDATE_INT, runTimer);
   FlexiTimer2::start();
-  
   switchToVideoSource(0,0,0);
-  digitalWrite(LED_1, HIGH);
-  digitalWrite(BUZZER, LOW);
 }
 
 void loop() {
  delay(1000);
-  printf("%d",buzzerStatus);
- #ifdef LOWVOLTAG_WARN
-  inputVoltage=analogRead(SUP_VOLT);
- if ( inputVoltage < ALARM_VOLT && abs(buzzerStatus) < 4 )
-  { buzzerStatus = 10 ;
-   }
- if ( inputVoltage > ALARM_VOLT && abs(buzzerStatus) > 4)
-  { buzzerStatus = 100 ;
-  }
- #endif
  
-  SWITCH_FPS_RESIST=map(analogRead(SENS_INPUT),0,1023,0,20);
+  inputVoltage=analogRead(SUP_VOLT);
+ if ( inputVoltage < ALARM_VOLT && abs(buzzerStatus) < 4 && dipStatus % 2 == 0){ 
+   buzzerStatus = 10 ;
+   }
+ if ( inputVoltage > ALARM_VOLT && abs(buzzerStatus) > 4 || dipStatus % 2 != 0) { 
+   buzzerStatus = 100 ;
+  }
+
+ switchFPSResist = map(analogRead(SENS_INPUT),0,1023,1,20);
+ dipStatus = calcDipStatus(analogRead(DIP_SWITCH));
+
 #ifdef SERIAL_OUTPUT_ON
   printf("input Voltage: %d \n", inputVoltage);
-  printf("SWITCH_FPS_RESIST: %d \n", SWITCH_FPS_RESIST);
+  printf("switchFPSResist: %d \n", switchFPSResist);
+  printf("dipStatus: %d \n",dipStatus);
 #endif
+
 
 
 }
